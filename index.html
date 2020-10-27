@@ -32,29 +32,7 @@
             <option value="3">3</option>
         </select>
 
-
-        <!-- checked posts -->
-        <!-- <h1 v-if="checkedPosts.length>0" class="text-center">checked posts</h1> -->
-        <!-- <table class="table table-bordered mt-5" v-if="checkedPosts.length>0">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>title</th>
-                    <th>body</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="post in posts" :key="post.id">
-                    <td>
-                        <input type="checkbox" name="check" v-model="post.checked">
-                        {{post.checked}}
-                    </td>
-                    <td>{{post.title}}</td>
-                    <td>{{post.body}}</td>
-                </tr>
-            </tbody>
-        </table> -->
-
+        total of checked id: {{checkedIdTotal}}
 
         <!-- all posts -->
         <h1 v-if="posts.length>0" class="text-center">all posts</h1>
@@ -70,7 +48,7 @@
                 <tr v-for="post in posts" :key="post.id">
                     <td>
                         <input type="checkbox" name="check" v-model="post.checked">
-                        {{post.checked}}
+                        <!-- {{post.checked}} -->
                     </td>
                     <td>{{post.title}}</td>
                     <td>{{post.body}}</td>
@@ -113,13 +91,22 @@
                 },
             },
             computed: {
-                checkedPosts: () => {
-                    return this.posts.map(post => {
-                        if (post.checked) {
-                            return post;
-                        }
-                    });
-                }
+                checkedPosts() {
+                    return this.posts.filter(post => post.checked);
+                },
+
+                checkedIdTotal(){
+                    // return this.checkedPosts.length;
+
+                    let total = 0;
+
+                    for(let post of this.checkedPosts){
+                        total += parseInt(post.id);
+                    }
+
+                    return total;
+                },
+
             },
             watch: {
                 sValue: {
