@@ -44,7 +44,7 @@
             <tbody>
                 <tr v-for="post in posts" :key="post.id">
                     <td>
-                        <input type="checkbox" name="check">
+                        <input type="checkbox" name="check" @onchange="postClickHandler(post)">
                     </td>
                     <td>{{post.title}}</td>
                     <td>{{post.body}}</td>
@@ -60,8 +60,12 @@
             data: {
                 sValue: 0,
                 posts: [],
+                checkedPosts: [],
             },
             methods: {
+                postClickHandler(post){
+                    console.log(post);
+                },
                 async getPosts() {
                     try {
                         let posts = await axios.get('https://jsonplaceholder.typicode.com/posts');
