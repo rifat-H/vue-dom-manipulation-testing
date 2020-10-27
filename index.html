@@ -44,7 +44,8 @@
             <tbody>
                 <tr v-for="post in posts" :key="post.id">
                     <td>
-                        <input type="checkbox" name="check" @change="postClickHandler(post)">
+                        <input type="checkbox" name="check" v-model="post.checked">
+                        {{post.checked}}
                     </td>
                     <td>{{post.title}}</td>
                     <td>{{post.body}}</td>
@@ -63,14 +64,23 @@
                 checkedPosts: [],
             },
             methods: {
-                postClickHandler(post){
-                    console.log(post);
-                    console.log(this.$event.target);
+
+                addCheckedProperty(posts) {
+                    return posts.map(function (post) {
+                        return {
+                            ...post,
+                            checked: false,
+                        }
+                    });
                 },
+
                 async getPosts() {
                     try {
                         let posts = await axios.get('https://jsonplaceholder.typicode.com/posts');
-                        this.posts = [...posts.data];
+
+                        let postsWithChecked = this.addCheckedProperty(posts.data);
+
+                        this.posts = postsWithChecked;
                     }
                     catch (err) {
                         console.log(err);
