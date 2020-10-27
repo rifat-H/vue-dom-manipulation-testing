@@ -44,7 +44,7 @@
             <tbody>
                 <tr v-for="post in posts" :key="post.id">
                     <td>
-                        <input type="checkbox" name="check" @onchange="postClickHandler(post)">
+                        <input type="checkbox" name="check" @change="postClickHandler(post)">
                     </td>
                     <td>{{post.title}}</td>
                     <td>{{post.body}}</td>
@@ -65,6 +65,7 @@
             methods: {
                 postClickHandler(post){
                     console.log(post);
+                    console.log(this.$event.target);
                 },
                 async getPosts() {
                     try {
