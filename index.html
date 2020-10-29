@@ -34,6 +34,48 @@
 
         total of checked id: {{checkedIdTotal}}
 
+
+        <!-- checked posts -->
+        <h1 v-if="checkedPosts.length>0" class="text-center">checked posts</h1>
+        <table class="table table-bordered mt-5" v-if="checkedPosts.length>0">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>title</th>
+                    <th>buy price</th>
+                    <th>sell price</th>
+                    <th>line_profit</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="post in checkedPosts" :key="post.id">
+                    <td>
+                        <input type="checkbox" name="check" v-model="post.checked">
+                        <!-- {{post.checked}} -->
+                    </td>
+                    <td>{{post.title}}</td>
+                    <td>{{post.buyPrice}}</td>
+                    <!-- <td>{{post.sellPrice}}</td> -->
+                    <td>
+                        <input type="text" v-model="post.sellPrice">
+                    </td>
+                    <td>{{post.sellPrice - post.buyPrice}}</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                <tr>
+                    <th colspan="2">Total</th>
+                    <th>{{totalCheckedBuyPrice}}</th>
+                    <th>{{totalCheckedSellPrice}}</th>
+                    <th>{{totalProfit}}</th>
+                </tr>
+                </tr>
+            </tfoot>
+        </table>
+
+
+
         <!-- all posts -->
         <h1 v-if="posts.length>0" class="text-center">all posts</h1>
         <table class="table table-bordered mt-5" v-if="posts.length>0">
@@ -41,7 +83,9 @@
                 <tr>
                     <th></th>
                     <th>title</th>
-                    <th>body</th>
+                    <th>buy price</th>
+                    <th>sell price</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -51,7 +95,8 @@
                         <!-- {{post.checked}} -->
                     </td>
                     <td>{{post.title}}</td>
-                    <td>{{post.body}}</td>
+                    <td>{{post.buyPrice}}</td>
+                    <td>{{post.sellPrice}}</td>
                 </tr>
             </tbody>
         </table>
@@ -64,7 +109,6 @@
             data: {
                 sValue: 0,
                 posts: [],
-                // checkedPosts: [],
             },
             methods: {
 
@@ -73,6 +117,8 @@
                         return {
                             ...post,
                             checked: false,
+                            buyPrice: 5,
+                            sellPrice: 10,
                         }
                     });
                 },
@@ -81,26 +127,50 @@
                     try {
                         let posts = await axios.get('https://jsonplaceholder.typicode.com/posts');
 
-                        let postsWithChecked = this.addCheckedProperty(posts.data);
+                        posts = this.addCheckedProperty(posts.data);
 
-                        this.posts = postsWithChecked;
+                        this.posts = posts;
                     }
                     catch (err) {
                         console.log(err);
                     }
                 },
             },
+
             computed: {
+
+                totalCheckedBuyPrice() {
+                    let total = 0;
+
+                    for (let post of this.checkedPosts) {
+                        total += parseInt(post.buyPrice);
+                    }
+
+                    return total;
+                },
+
+                totalCheckedSellPrice() {
+                    let total = 0;
+
+                    for (let post of this.checkedPosts) {
+                        total += parseInt(post.sellPrice);
+                    }
+
+                    return total;
+                },
+
+                totalProfit() {
+                    return this.totalCheckedSellPrice - this.totalCheckedBuyPrice;
+                },
+
                 checkedPosts() {
                     return this.posts.filter(post => post.checked);
                 },
 
-                checkedIdTotal(){
-                    // return this.checkedPosts.length;
-
+                checkedIdTotal() {
                     let total = 0;
 
-                    for(let post of this.checkedPosts){
+                    for (let post of this.checkedPosts) {
                         total += parseInt(post.id);
                     }
 
@@ -108,6 +178,7 @@
                 },
 
             },
+
             watch: {
                 sValue: {
                     async handler(newVal, oldVal) {
